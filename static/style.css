@@ -1,0 +1,8 @@
+@font-face {
+  font-family: "JetBrainsMono Nerd Font";
+  src: url("JetBrainsMonoNerdFont-Regular.ttf") format("truetype");
+}
+
+body {
+  font-family: "JetBrainsMono Nerd Font";
+}

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    <title>Observing black-box services on my home server :: kaezone&#39;s blog</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="I&#39;ve been running a home media server / homelab for about six months now, running the usual bunch of services with Jellyfin to serve everything up. Besides a brief misadventure with Kubernetes, it&#39;s been pretty reliable, and I don&#39;t use a single streaming service anymore.
+
+The only issue is that I&#39;m a security analyst by trade, so I&#39;m obsessed with making dashboards, and none of these services provide any metrics. Thankfully, there&#39;s a way around that." />
+<meta name="keywords" content="" />
+
+  <meta name="robots" content="noodp" />
+
+<link rel="canonical" href="/posts/beyla/" />
+
+
+
+
+
+  
+  <link rel="stylesheet" href="/css/buttons.min.86f6b4c106b6c6eb690ae5203d36b442c1f66f718ff4e8164fa86cf6c61ad641.css">
+
+  
+  <link rel="stylesheet" href="/css/code.min.d529ea4b2fb8d34328d7d31afc5466d5f7bc2f0bc9abdd98b69385335d7baee4.css">
+
+  
+  <link rel="stylesheet" href="/css/fonts.min.026f7f6aa6633536aa419c117113e3b1a0732343b38bbc5f161eb751cfcb9db2.css">
+
+  
+  <link rel="stylesheet" href="/css/footer.min.eb8dfc2c6a7eafa36cd3ba92d63e69e849e2200e0002a228d137f236b09ecd75.css">
+
+  
+  <link rel="stylesheet" href="/css/gist.min.a751e8b0abe1ba8bc53ced52a38b19d8950fe78ca29454ea8c2595cf26aad5c0.css">
+
+  
+  <link rel="stylesheet" href="/css/header.min.75c7eb0e2872d95ff48109c6647d0223a38db52e2561dd87966eb5fc7c6bdac6.css">
+
+  
+  <link rel="stylesheet" href="/css/main.min.36833afd348409fc6c3d09d0897c5833d9d5bf1ff31f5e60ea3ee42ce2b1268c.css">
+
+  
+  <link rel="stylesheet" href="/css/menu.min.3c17467ebeb3d38663dce68f71f519901124fa5cbb4519b2fb0667a21e9aca39.css">
+
+  
+  <link rel="stylesheet" href="/css/pagination.min.bbb986dbce00a5ce5aca0504b7925fc1c581992a4bf57f163e5d69cc1db7d836.css">
+
+  
+  <link rel="stylesheet" href="/css/post.min.e6dddd258e64c83e05cec0cd49c05216742d42fc8ecbfbe6b67083412b609bd3.css">
+
+  
+  <link rel="stylesheet" href="/css/syntax.min.a0773cce9310cb6d8ed23e50f005448facf29a53001b57e038828daa466b25c0.css">
+
+  
+  <link rel="stylesheet" href="/css/terminal.min.e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.css">
+
+  
+  <link rel="stylesheet" href="/css/terms.min.b81791663c3790e738e571cdbf802312390d30e4b1d8dc9d814a5b5454d0ac11.css">
+
+
+<link rel="stylesheet" href="/terminal.css">
+
+<link rel="stylesheet" href="/style.css">
+
+
+<link rel="shortcut icon" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+
+<meta name="twitter:card" content="summary" />
+
+  
+    <meta name="twitter:site" content="" />
+  
+    <meta name="twitter:creator" content="" />
+
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Observing black-box services on my home server">
+<meta property="og:description" content="I&#39;ve been running a home media server / homelab for about six months now, running the usual bunch of services with Jellyfin to serve everything up. Besides a brief misadventure with Kubernetes, it&#39;s been pretty reliable, and I don&#39;t use a single streaming service anymore.
+
+The only issue is that I&#39;m a security analyst by trade, so I&#39;m obsessed with making dashboards, and none of these services provide any metrics. Thankfully, there&#39;s a way around that." />
+<meta property="og:url" content="/posts/beyla/" />
+<meta property="og:site_name" content="kaezone&#39;s blog" />
+
+  <meta property="og:image" content="/og-image.png">
+
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="627">
+
+
+  <meta property="article:published_time" content="2025-12-09 14:21:43 &#43;1300 NZDT" />
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body>
+
+
+<div class="container center">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    kaezone
+  </div>
+</a>
+
+    </div>
+    
+    
+  </div>
+  
+</header>
+
+
+  <div class="content">
+    
+<article class="post">
+  <h1 class="post-title">
+    <a href="/posts/beyla/">Observing black-box services on my home server</a>
+  </h1>
+  <div class="post-meta"><time class="post-date">2025-12-09</time></div>
+
+  
+  
+
+
+  
+
+  <div class="post-content"><div>
+        <p>I&rsquo;ve been running a home media server / homelab for about six months now, running the usual bunch of services with Jellyfin to serve everything up. Besides a brief misadventure with Kubernetes, it&rsquo;s been pretty reliable, and I don&rsquo;t use a single streaming service anymore.</p>
+<p>The only issue is that I&rsquo;m a security analyst by trade, so I&rsquo;m obsessed with making dashboards, and none of these services provide any metrics. Thankfully, there&rsquo;s a way around that.</p>
+<h2 id="my-server">My server<a href="#my-server" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<p>I run all my services on a Lenovo ThinkCentre M920T workstation tower that my work was getting rid of. It&rsquo;s got an Intel i7-9700, 32GB of RAM, and I&rsquo;ve slapped a random 2TB spinning rust disk in there for storing media - which is rapidly filling up, no thanks to rising disk prices&hellip;</p>
+<figure><img src="/images/thinkserver.jpg"
+    alt="An image of my home server, positioned on top of a wardrobe."><figcaption>
+      <p>Perched in my &ldquo;server room&rdquo;</p>
+    </figcaption>
+</figure>
+
+<p>In any case, it has more than enough grunt to run everything I need. Right now, everything just runs as Docker containers on Debian, fronted by <a href="https://caddyserver.com/">Caddy</a> and <a href="https://www.crowdsec.net/">CrowdSec</a>.</p>
+<h2 id="monitoring">Monitoring<a href="#monitoring" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<p>Before getting into the fancy black-box observability stuff, I want to provide an overview of what I use to actually store everything.</p>
+<p>For all my monitoring and dashboarding needs, I use bits and pieces of <a href="https://grafana.com/oss/">Grafana Labs&rsquo; open-source stack</a> - namely Grafana itself, Alloy, Loki, and Tempo:</p>
+<ul>
+<li>Grafana, as you probably know, is for querying and dashboarding with the telemetry DBs.</li>
+<li>Alloy is Grafana&rsquo;s distribution of the OpenTelemetry Collector - all my telemetry data goes through Alloy, then is shipped off to the DBs.</li>
+<li>Loki stores all my log data.</li>
+<li>Tempo stores OpenTelemetry trace spans, and can generate metrics from them.</li>
+</ul>
+<p>For metrics, I use plain old Prometheus instead of Grafana Mimir. I did run Mimir for a while (during that Kubernetes misadventure), and it&rsquo;s great for high volumes of metrics, but I found it a bit difficult to operate at my scale.</p>
+<p>With this setup, I have Alloy scraping metrics from anything exposing a <code>/metrics</code> endpoint (including pulling from cAdvisor and Node Exporter), pulling all the logs out of my Docker containers and the node, then shipping them off to Prometheus and Loki.</p>
+<h2 id="tempo-and-beyla">Tempo and Beyla<a href="#tempo-and-beyla" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<p>I use Tempo almost exclusively for the black-box observability stuff - nothing I run offers OpenTelemetry traces by default. When paired with Grafana Beyla, I can shake out trace spans and metrics for services with no built-in observability features at all.</p>
+<p>Beyla is another bit of Grafana Labs kit - and soon to be an <a href="https://grafana.com/blog/2025/05/07/opentelemetry-ebpf-instrumentation-beyla-donation/">official OpenTelemetry project</a> - that uses eBPF to generate traces and metrics for applications by monitoring network traffic. For those unaware, eBPF is a Linux technology for loading small programs in the kernel at runtime, usually for networking-related tasks.</p>
+<p>Beyla is built into Alloy, so with a bit of configuration, you can set it up quite quickly:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">// run Beyla against services</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">beyla.ebpf &#34;services&#34; {</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">ebpf {</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="l">track_request_headers = true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="l">context_propagation = &#34;all&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>}<span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">discovery {</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="l">instrument {</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="l">open_ports = &#34;&lt;PORT&gt;,&lt;PORT&gt;&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="l">containers_only = true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span>}<span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>}<span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">metrics {</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="l">features = [&#34;application&#34;, &#34;network&#34;]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>}<span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">output {</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="l">traces = [otelcol.processor.batch.default.input]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>}<span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span>}<span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">// scrape and ship off to Prometheus</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">prometheus.scrape &#34;beyla&#34; {</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">targets = beyla.ebpf.services.targets</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">honor_labels = true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">forward_to = [prometheus.remote_write.metrics.receiver]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span>}<span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">// batch and ship off to Tempo</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">otelcol.processor.batch &#34;default&#34; {</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">output {</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="l">traces  = [otelcol.exporter.otlphttp.traces.input]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>}<span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span>}<span class="w">
+</span></span></span></code></pre></div><p>You can point Beyla at any comma-separated list of ports, and it&rsquo;ll automatically instrument them, spitting out trace spans and RED (Rate-Error-Duration) metrics. In this case, I&rsquo;m only looking at executables running inside a container.</p>
+<h3 id="traces">Traces<a href="#traces" class="hanchor" ariaLabel="Anchor">#</a> </h3>
+<p>With everything wired up, trace spans are now viewable in Grafana through the Traces Drilldown feature, including span metrics generated by Tempo:
+<figure><img src="/images/spanmetrics.png"
+    alt="A screenshot of span metrics in Grafana Traces Drilldown.">
+</figure>
+</p>
+<p>And trace spans themselves, including context propagation to other services:
+<figure><img src="/images/span.png"
+    alt="A screenshot of a trace span in Grafana Traces Drilldown.">
+</figure>
+</p>
+<h3 id="metrics">Metrics<a href="#metrics" class="hanchor" ariaLabel="Anchor">#</a> </h3>
+<p>As previously mentioned, Beyla will generate RED metrics by looking at all the incoming and outgoing calls for each service you instrument - there&rsquo;s a full list of the generated metrics available <a href="https://grafana.com/docs/beyla/latest/metrics/">here</a>.</p>
+<p>Now that metrics are available, we can put them to use in dashboards - here&rsquo;s a quick example of a few panels in the <a href="https://grafana.com/grafana/dashboards/19923-beyla-red-metrics/">Beyla RED Metrics</a> example dashboard:
+<figure><img src="/images/red.png"
+    alt="A screenshot of inbound and outbound HTTP duration/rate in the dashboard.">
+</figure>
+</p>
+<h2 id="conclusion">Conclusion<a href="#conclusion" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<p>With all this set up, I now have metrics, logs, and traces for services where I could previously only get logs, with very little setup required. It&rsquo;s worth noting that while the metrics are limited to network traffic, if a service offers an API, you can often use an exporting script to convert that information to Prometheus metrics too.</p>
+<p>The services I run aren&rsquo;t necessarily full &ldquo;black-boxes&rdquo; either - they&rsquo;re all open-source, so you could definitely inject <a href="https://opentelemetry.io/docs/zero-code/">OpenTelemetry&rsquo;s other auto-instrumentation options</a>, but that&rsquo;s less fun.</p>
+<p>There&rsquo;s probably not a whole lot of practical use for this in my setup (besides &ldquo;ooh graphs&rdquo;), but for actual use cases where you need to monitor e.g. an old legacy application, it&rsquo;s probably pretty great.</p>
+
+      </div></div>
+
+  
+    
+
+  
+
+  
+    
+
+  
+</article>
+
+  </div>
+
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright">
+        <span>© 2025 Powered by <a href="https://gohugo.io">Hugo</a></span>
+    
+      <span>:: <a href="https://github.com/panr/hugo-theme-terminal" target="_blank">Theme</a> made by <a href="https://github.com/panr" target="_blank">panr</a></span>
+      </div>
+  </div>
+</footer>
+
+
+
+
+
+
+<script type="text/javascript" src="/bundle.min.js"></script>
+
+
+
+
+
+  
+</div>
+
+</body>
+</html>
