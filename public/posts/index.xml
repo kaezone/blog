@@ -13,7 +13,7 @@
       <link>https://kaezone.nz/posts/home-server-observability/</link>
       <pubDate>Tue, 09 Dec 2025 21:18:09 +1300</pubDate>
       <guid>https://kaezone.nz/posts/home-server-observability/</guid>
-      <description>&lt;p&gt;In my &lt;a href=&#34;https://kaezone.nz/posts/beyla/&#34;&gt;previous post&lt;/a&gt; I wrote a bit about how I monitor my home server, and how I use Grafana Beyla to get traces and metrics from services with no existing telemetry.&lt;/p&gt;&#xA;&lt;p&gt;This time, I&amp;rsquo;m going to go through how to set up your own observability stack for home server scale, and how to start collecting metrics, logs, and traces.&lt;/p&gt;&#xA;&lt;h2 id=&#34;why-bother&#34;&gt;Why bother?&lt;/h2&gt;&#xA;&lt;p&gt;If you&amp;rsquo;re running a homelab, you&amp;rsquo;re probably somewhat interested in monitoring already - it&amp;rsquo;s an important part of operating actual systems, and the whole point of homelabbing is to &lt;del&gt;burn money&lt;/del&gt; learn new things.&lt;/p&gt;</description>
+      <description>&lt;p&gt;In my &lt;a href=&#34;https://kaezone.nz/posts/beyla/&#34;&gt;previous post&lt;/a&gt; I wrote a bit about how I monitor my home server, and how I use Grafana Beyla to get traces and metrics from services with no existing telemetry.&lt;/p&gt;&#xA;&lt;p&gt;This time, I&amp;rsquo;m going to go through how to set up your own observability stack for home server scale, and how to start collecting metrics, logs, and traces. I&amp;rsquo;ll be showing a mix of running on the node and running in Docker containers, but you can run everything on metal or everything in Docker if you wish.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Observing black-box services on my home server</title>
