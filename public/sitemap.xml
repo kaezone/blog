@@ -2,13 +2,16 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://kaezone.nz/</loc>
-    <lastmod>2025-12-09T14:21:43+13:00</lastmod>
+    <loc>https://kaezone.nz/posts/home-server-observability/</loc>
+    <lastmod>2025-12-09T21:18:09+13:00</lastmod>
   </url><url>
-    <loc>https://kaezone.nz/posts/beyla/</loc>
-    <lastmod>2025-12-09T14:21:43+13:00</lastmod>
+    <loc>https://kaezone.nz/</loc>
+    <lastmod>2025-12-09T21:18:09+13:00</lastmod>
   </url><url>
     <loc>https://kaezone.nz/posts/</loc>
+    <lastmod>2025-12-09T21:18:09+13:00</lastmod>
+  </url><url>
+    <loc>https://kaezone.nz/posts/beyla/</loc>
     <lastmod>2025-12-09T14:21:43+13:00</lastmod>
   </url><url>
     <loc>https://kaezone.nz/categories/</loc>

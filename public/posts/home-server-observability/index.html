@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    <title>Home server observability 101 :: kaezone&#39;s blog</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="In my [previous post](/posts/beyla) I wrote a bit about how I monitor my home server, and how I use Grafana Beyla to get traces and metrics from services with no existing telemetry.
+
+This time, I&#39;m going to go through how to set up your own observability stack for home server scale, and how to start collecting metrics, logs, and traces." />
+<meta name="keywords" content="" />
+
+  <meta name="robots" content="noodp" />
+
+<link rel="canonical" href="https://kaezone.nz/posts/home-server-observability/" />
+
+
+
+
+
+  
+  <link rel="stylesheet" href="https://kaezone.nz/css/buttons.min.86f6b4c106b6c6eb690ae5203d36b442c1f66f718ff4e8164fa86cf6c61ad641.css">
+
+  
+  <link rel="stylesheet" href="https://kaezone.nz/css/code.min.d529ea4b2fb8d34328d7d31afc5466d5f7bc2f0bc9abdd98b69385335d7baee4.css">
+
+  
+  <link rel="stylesheet" href="https://kaezone.nz/css/fonts.min.026f7f6aa6633536aa419c117113e3b1a0732343b38bbc5f161eb751cfcb9db2.css">
+
+  
+  <link rel="stylesheet" href="https://kaezone.nz/css/footer.min.eb8dfc2c6a7eafa36cd3ba92d63e69e849e2200e0002a228d137f236b09ecd75.css">
+
+  
+  <link rel="stylesheet" href="https://kaezone.nz/css/gist.min.a751e8b0abe1ba8bc53ced52a38b19d8950fe78ca29454ea8c2595cf26aad5c0.css">
+
+  
+  <link rel="stylesheet" href="https://kaezone.nz/css/header.min.75c7eb0e2872d95ff48109c6647d0223a38db52e2561dd87966eb5fc7c6bdac6.css">
+
+  
+  <link rel="stylesheet" href="https://kaezone.nz/css/main.min.36833afd348409fc6c3d09d0897c5833d9d5bf1ff31f5e60ea3ee42ce2b1268c.css">
+
+  
+  <link rel="stylesheet" href="https://kaezone.nz/css/menu.min.3c17467ebeb3d38663dce68f71f519901124fa5cbb4519b2fb0667a21e9aca39.css">
+
+  
+  <link rel="stylesheet" href="https://kaezone.nz/css/pagination.min.bbb986dbce00a5ce5aca0504b7925fc1c581992a4bf57f163e5d69cc1db7d836.css">
+
+  
+  <link rel="stylesheet" href="https://kaezone.nz/css/post.min.e6dddd258e64c83e05cec0cd49c05216742d42fc8ecbfbe6b67083412b609bd3.css">
+
+  
+  <link rel="stylesheet" href="https://kaezone.nz/css/syntax.min.a0773cce9310cb6d8ed23e50f005448facf29a53001b57e038828daa466b25c0.css">
+
+  
+  <link rel="stylesheet" href="https://kaezone.nz/css/terminal.min.e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.css">
+
+  
+  <link rel="stylesheet" href="https://kaezone.nz/css/terms.min.b81791663c3790e738e571cdbf802312390d30e4b1d8dc9d814a5b5454d0ac11.css">
+
+
+<link rel="stylesheet" href="https://kaezone.nz/terminal.css">
+
+<link rel="stylesheet" href="https://kaezone.nz/style.css">
+
+
+<link rel="shortcut icon" href="https://kaezone.nz/favicon.png">
+<link rel="apple-touch-icon" href="https://kaezone.nz/apple-touch-icon.png">
+
+
+<meta name="twitter:card" content="summary" />
+
+  
+    <meta name="twitter:site" content="" />
+  
+    <meta name="twitter:creator" content="" />
+
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Home server observability 101">
+<meta property="og:description" content="In my [previous post](/posts/beyla) I wrote a bit about how I monitor my home server, and how I use Grafana Beyla to get traces and metrics from services with no existing telemetry.
+
+This time, I&#39;m going to go through how to set up your own observability stack for home server scale, and how to start collecting metrics, logs, and traces." />
+<meta property="og:url" content="https://kaezone.nz/posts/home-server-observability/" />
+<meta property="og:site_name" content="kaezone&#39;s blog" />
+
+  <meta property="og:image" content="https://kaezone.nz/og-image.png">
+
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="627">
+
+
+  <meta property="article:published_time" content="2025-12-09 21:18:09 &#43;1300 NZDT" />
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body>
+
+
+<div class="container center">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    kaezone
+  </div>
+</a>
+
+    </div>
+    
+    
+  </div>
+  
+</header>
+
+
+  <div class="content">
+    
+<article class="post">
+  <h1 class="post-title">
+    <a href="https://kaezone.nz/posts/home-server-observability/">Home server observability 101</a>
+  </h1>
+  <div class="post-meta"><time class="post-date">2025-12-09</time></div>
+
+  
+  
+
+
+  
+
+  <div class="post-content"><div>
+        <p>In my <a href="/posts/beyla/">previous post</a> I wrote a bit about how I monitor my home server, and how I use Grafana Beyla to get traces and metrics from services with no existing telemetry.</p>
+<p>This time, I&rsquo;m going to go through how to set up your own observability stack for home server scale, and how to start collecting metrics, logs, and traces. I&rsquo;ll be showing a mix of running on the node and running in Docker containers, but you can run everything on metal or everything in Docker if you wish.</p>
+<h2 id="why-bother">Why bother?<a href="#why-bother" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<p>If you&rsquo;re running a homelab, you&rsquo;re probably somewhat interested in monitoring already - it&rsquo;s an important part of operating actual systems, and the whole point of homelabbing is to <del>burn money</del> learn new things.</p>
+<p>For home server folks, you might sit in the same category as above, but it can still be pretty useful in practice. It&rsquo;s pretty annoying to sit down to watch a movie only to find out your server has fallen over (ask me how I know), so having robust monitoring can alert you before issues happen, and help you diagnose them when they do.</p>
+<p>The last reason is because graphs are cool. More graphs is more good.</p>
+<h2 id="telemetry-signals-and-standards">Telemetry signals and standards<a href="#telemetry-signals-and-standards" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<p>We&rsquo;re going to put together an observability stack for the three main telemetry signals - metrics, logs, and traces (MLT). There&rsquo;s also profiles, but I&rsquo;m not particularly interested in continuous profiling.</p>
+<ul>
+<li>
+<p>Metrics are numeric data points, measured over time - think CPU usage, memory usage, etc.</p>
+</li>
+<li>
+<p>Logs are&hellip; logs, timestamped textual messages from software describing errors, changes in state, etc.</p>
+</li>
+<li>
+<p>Traces are a representation of what happens during the life of a network request in an application, and how long processing that request takes. A trace is comprised of spans, which measure individual units of work - one HTTP call, one database call, etc.</p>
+</li>
+</ul>
+<p>These three signals provide a huge amount of insight into the functioning of an application, and linking them together is incredibly useful for debugging issues. A metric might tell you that request latency is increasing, a log might give you some insight into whether any errors or timeouts are occurring, and a trace might tell you exactly where in the request lifecycle the increased latency is.</p>
+<p>There&rsquo;s quite a few standards for these signals, including some long-running proprietary players like Datadog and New Relic, and more recent open standards like OpenTelemetry. While OTel is really exciting and nicely unifies all these signals, we&rsquo;re not going to look at a completely OTel stack - it can be quite a bit more complicated to operate at a small scale, but it&rsquo;s not too complicated to switch over if you want to.</p>
+<h2 id="components">Components<a href="#components" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<p>Any good observability stack needs three core things:</p>
+<ul>
+<li>
+<p>Collector(s) to collect, aggregate, and transform your signals.</p>
+</li>
+<li>
+<p>Databases to store all the data.</p>
+</li>
+<li>
+<p>Some software for dashboarding, querying, and exploring your data.</p>
+</li>
+</ul>
+<p>We&rsquo;re mainly going to be using <a href="https://grafana.com/oss/">Grafana Labs&rsquo; open-source stack</a> here:</p>
+<ul>
+<li>
+<p>Our collector will be <a href="https://grafana.com/docs/alloy/latest/">Grafana Alloy</a>.</p>
+</li>
+<li>
+<p>For our metrics database, we&rsquo;re going to use <a href="https://prometheus.io/">Prometheus</a>, a time-honored classic. Grafana offers their own metrics DB called Mimir, and it&rsquo;s great, but it&rsquo;s primarily intended for large-scale deployments and is significantly more complex to operate.</p>
+</li>
+<li>
+<p>For logs, we&rsquo;ll be using <a href="https://grafana.com/docs/loki/latest/">Grafana Loki</a>. There&rsquo;s a lot of options in this space, but Loki works great all the way from small-scale to extremely large scale.</p>
+</li>
+<li>
+<p>For traces, we&rsquo;ll use <a href="https://grafana.com/docs/tempo/latest/">Grafana Tempo</a>. It&rsquo;s pretty new and designed for large scale, but it&rsquo;s not too complicated to operate for our needs, and integrates really well with the other software.</p>
+</li>
+<li>
+<p>Finally, for dashboards, querying, and exploring, we&rsquo;ll use <a href="https://grafana.com/docs/grafana/latest/">Grafana</a>. It&rsquo;s been around forever, and naturally integrates with everything else that Grafana Labs makes.</p>
+</li>
+</ul>
+<p>Here&rsquo;s a very simplified diagram of what we&rsquo;ll end up with:</p>
+<pre class="mermaid">
+  ---
+config:
+  layout: elk
+  theme: dark
+---
+flowchart LR
+A[Metrics] ---|pulled by| B[Alloy]
+C[Logs] ---|pulled by| B[Alloy]
+D[Traces] ---|pushed to| B[Alloy]
+B[Alloy] ---|write to| E[Prometheus]
+B[Alloy] ---|write to| F[Loki]
+B[Alloy] ---|write to| G[Tempo]
+E[Prometheus] ---|queried by| H[Grafana]
+F[Loki] ---|queried by| H[Grafana]
+G[Tempo] ---|queried by| H[Grafana]
+</pre>
+
+<h2 id="databases">Databases<a href="#databases" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<p>We&rsquo;re going to start by setting up our databases, Prometheus, Loki, and Tempo. We&rsquo;ll run these as Docker containers - Prometheus is very simple, and Grafana Labs provides some good compose files to start off with a local setup for Loki and Tempo.</p>
+<h3 id="prometheus">Prometheus<a href="#prometheus" class="hanchor" ariaLabel="Anchor">#</a> </h3>
+<p>Setting up Prometheus is pretty simple, it just needs a small config file and a volume to store data on. Here&rsquo;s the compose file I use:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">services</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">prometheus</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">prom/prometheus:latest</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l">prometheus</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="s2">&#34;--config.file=/etc/prometheus/prometheus.yml&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="s2">&#34;--web.enable-remote-write-receiver&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">volumes</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="l">data:/prometheus</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="l">/opt/prometheus:/etc/prometheus</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">ports</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="m">9090</span><span class="p">:</span><span class="m">9090</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l">unless-stopped</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">volumes</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">data</span><span class="p">:</span><span class="w">
+</span></span></span></code></pre></div><p>You can mount your <code>/etc/prometheus</code> folder from wherever you like. Take note of the <code>--web.enable-remote-write-receiver</code> argument - this is to allow Alloy to push metrics to Prometheus, instead of Prometheus pulling them itself.</p>
+<p>For the <code>prometheus.yml</code> file, it&rsquo;s pretty basic:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">global</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">scrape_interval</span><span class="p">:</span><span class="w"> </span><span class="l">15s</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">evaluation_interval</span><span class="p">:</span><span class="w"> </span><span class="l">15s</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">scrape_configs</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">job_name</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;prometheus&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">static_configs</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">targets</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s1">&#39;localhost:9090&#39;</span><span class="p">]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">rule_files</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="s2">&#34;/etc/prometheus/rules/*.yml&#34;</span><span class="w">
+</span></span></span></code></pre></div><p>This configuration file just sets Prometheus to scrape its own metrics, and provides a location to import alerting rules from - we won&rsquo;t go too much into that though.</p>
+<p>It&rsquo;s worth noting that Prometheus pretty much only stores things locally. If you want to use S3 or other remote storage, you may want to use Grafana Mimir instead.</p>
+<h3 id="loki">Loki<a href="#loki" class="hanchor" ariaLabel="Anchor">#</a> </h3>
+<p>This is the compose file I use for Loki:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">services</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">loki</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">grafana/loki:latest</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l">loki</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span>-<span class="l">config.file=/etc/loki/loki.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">volumes</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="l">data:/tmp/loki</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="l">/opt/loki:/etc/loki</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">ports</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="m">3100</span><span class="p">:</span><span class="m">3100</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l">unless-stopped</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">volumes</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">data</span><span class="p">:</span><span class="w">
+</span></span></span></code></pre></div><p>For the <code>loki.yaml</code> configuration file, I use <a href="https://grafana.com/docs/loki/latest/configure/examples/configuration-examples/#1-local-configuration-exampleyaml">Grafana Labs&rsquo; local config example</a>. This configuration stores everything locally, but Loki does have support for S3 and a pile of other remote storage options.</p>
+<h3 id="tempo">Tempo<a href="#tempo" class="hanchor" ariaLabel="Anchor">#</a> </h3>
+<p>Here&rsquo;s my compose file for Tempo:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">services</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">tempo</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">grafana/tempo:latest</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l">tempo</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span>-<span class="l">config.file=/etc/tempo/tempo.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">volumes</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="l">data:/var/tempo</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="l">/opt/tempo:/etc/tempo</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">ports</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="m">3200</span><span class="p">:</span><span class="m">3200</span><span class="w"> </span><span class="c"># HTTP querying</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="m">9095</span><span class="p">:</span><span class="m">9095</span><span class="w"> </span><span class="c"># gRPC querying</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="m">4317</span><span class="p">:</span><span class="m">4317</span><span class="w"> </span><span class="c"># gRPC OpenTelemetry</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="m">4318</span><span class="p">:</span><span class="m">4318</span><span class="w"> </span><span class="c"># HTTP OpenTelemetry</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l">unless-stopped</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">volumes</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">data</span><span class="p">:</span><span class="w">
+</span></span></span></code></pre></div><p>Similarly to Loki, I use <a href="https://github.com/grafana/tempo/blob/main/example/docker-compose/local/tempo.yaml">Grafana Labs&rsquo; local config example</a>. I recommend removing the <code>per_tenant_override_config</code> line, as it interferes with trace metrics in Grafana, and I remove the unused receivers (Jaeger, Zipkin, OpenCensus) for cleanliness. You can use S3 or other storage backends here as well.</p>
+<h2 id="grafana">Grafana<a href="#grafana" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<p>Setting up Grafana is pretty easy:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">services</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">grafana</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">grafana/grafana:latest</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l">grafana</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">environment</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="l">GF_PUBLIC_DASHBOARDS_ENABLED=false</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">volumes</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="l">data:/var/lib/grafana</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">ports</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="m">3000</span><span class="p">:</span><span class="m">3000</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l">unless-stopped</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">volumes</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">data</span><span class="p">:</span><span class="w">
+</span></span></span></code></pre></div><p>No config files here. Once Grafana is running, you can head to <code>&lt;your server&gt;:3000</code>, log in as <code>admin:admin</code>, set your password, and configure your data sources.</p>
+<p>Head to &ldquo;Connections -&gt; Data sources&rdquo;, and add each of your databases. You&rsquo;ll just need to enter the URL and hit &ldquo;Save and test&rdquo; - if you run everything in the same Docker network, you can just use <code>prometheus:9009</code>, <code>loki:3100</code>, and <code>tempo:3200</code>.</p>
+<p>Head to &ldquo;Drilldown -&gt; Metrics&rdquo;, and you should be able to see your first metrics coming in, through Prometheus&rsquo; self-scraping:
+<figure><img src="/images/prommetrics.png"
+    alt="A screenshot of Prometheus self-monitoring metrics in Grafana.">
+</figure>
+</p>
+<h2 id="alloy">Alloy<a href="#alloy" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<p>Finally, we&rsquo;ll set up the collector, which will do the real heavy lifting. Alloy is extremely configurable and modular, and provides a lot of built-in modules for pulling, pushing, and manipulating telemetry signals.</p>
+<p>For this guide, we&rsquo;ll use a basic setup that gets node metrics and logs, as well as Docker metrics and logs. To get started with traces, take a look at the <a href="/posts/beyla/">previous post</a> after this.</p>
+<p>Possibly controversially, we&rsquo;ll install Alloy on the node. It&rsquo;s a bit more complicated to do everything in a container and involves mounting a lot of host paths, but you can find information on that <a href="https://grafana.com/docs/alloy/latest/set-up/install/docker/">here</a>. Install Alloy following <a href="https://grafana.com/docs/alloy/latest/set-up/install/linux/">this documentation.</a>. Once installed, open up your favourite flavor of editor at <code>/etc/alloy/config.alloy</code>, and follow along as we build up a config file.</p>
+<p>To start, we&rsquo;ll set up Alloy&rsquo;s logging, and add our databases:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">logging {</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">level = &#34;info&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">format = &#34;logfmt&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span>}<span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">// writer for Prometheus</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">prometheus.remote_write &#34;metrics&#34; {</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">endpoint {</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="l">url = &#34;http://localhost:9090/api/v1/write&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>}<span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span>}<span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">// writer for Loki</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">loki.write &#34;logs&#34; {</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">endpoint {</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="l">url = &#34;http://localhost:3100/loki/api/v1/push&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>}<span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span>}<span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">// writer for Tempo</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">otelcol.exporter.otlphttp &#34;traces&#34; {</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">client {</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="l">endpoint = &#34;http://localhost:4318&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>}<span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span>}<span class="w">
+</span></span></span></code></pre></div><p>Our metrics and logs collection will plumb into these writers. First, we&rsquo;ll collect Alloy&rsquo;s own metrics:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">// expose Alloy metrics</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">prometheus.exporter.self &#34;alloy&#34; { }</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">// scrape those metrics and send to Prometheus</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">prometheus.scrape &#34;alloy&#34; {</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">targets = prometheus.exporter.self.alloy.targets</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">forward_to = [prometheus.remote_write.metrics.receiver]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span>}<span class="w">
+</span></span></span></code></pre></div><p>As you can see, collecting Prometheus metrics is pretty easy - we just need a <code>prometheus.scrape</code> component that takes a target and a writer to send them to. If you have any apps exposing a <code>/metrics</code> endpoint, you can scrape them by setting <code>targets = [{__address__ = &quot;localhost:&lt;PORT&gt;&quot;}]</code>.</p>
+<p>Next, we&rsquo;ll collect Docker metrics. Be warned that if you&rsquo;re using a standard Docker setup, you&rsquo;ll need to add the <code>alloy</code> user to the <code>docker</code> group, or run Alloy as root:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">// scrape Docker metrics</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">prometheus.exporter.cadvisor &#34;docker&#34; {</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">docker_host = &#34;unix:///var/run/docker.sock&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">store_container_labels = true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">docker_only = true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span>}<span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">prometheus.scrape &#34;docker&#34; {</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">targets = prometheus.exporter.cadvisor.docker.targets</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">forward_to = [prometheus.remote_write.metrics.receiver]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span>}<span class="w">
+</span></span></span></code></pre></div><p>Next, the Docker logs:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">// scrape Docker logs   </span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">discovery.docker &#34;docker&#34; {</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">host = &#34;unix:///var/run/docker.sock&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span>}<span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">discovery.relabel &#34;logs_integrations_docker&#34; {</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">targets = []</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">rule {</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="l">source_labels = [&#34;__meta_docker_container_name&#34;]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="l">regex = &#34;/(.*)&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="l">target_label = &#34;service_name&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>}<span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span>}<span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">loki.source.docker &#34;docker&#34; {</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">host       = &#34;unix:///var/run/docker.sock&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">targets    = discovery.docker.docker.targets</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">labels     = {&#34;platform&#34; = &#34;docker&#34;}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">relabel_rules = discovery.relabel.logs_integrations_docker.rules</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">forward_to = [loki.write.logs.receiver]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span>}<span class="w">
+</span></span></span></code></pre></div><p>This block does a bit of relabeling magic to add the Docker container name as a <code>service_name</code> label.</p>
+<p>Finally, the host metrics and logs. I&rsquo;d recommend following the <a href="https://grafana.com/docs/alloy/latest/monitor/monitor-linux/">Grafana Labs documentation</a> for this one, as it&rsquo;s a pretty big chunk of config.</p>
+<p>Once you&rsquo;re all done writing the file, save it and run <code>systemctl restart alloy</code>.</p>
+<p>Hopefully, you should get a rough idea of how Alloy is configured from this. From an ingest (scraping or a push endpoint) you can forward data to components that transform it in various ways, then you can ship it off to the databases.</p>
+<h3 id="future-enhancement">Future enhancement<a href="#future-enhancement" class="hanchor" ariaLabel="Anchor">#</a> </h3>
+<p>As mentioned previously, you can quickly get started with tracing by using the Alloy and Beyla configuration shown in my <a href="/posts/beyla/">previous post</a>. If you run services that expose OpenTelemetry signals, you can add an <a href="https://grafana.com/docs/alloy/latest/collect/opentelemetry-to-lgtm-stack/">OpenTelemetry endpoint</a> to Alloy and collect them there.</p>
+<h2 id="conclusion">Conclusion<a href="#conclusion" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<p>Now that you have everything set up, you should be able to see metrics, logs, and traces (if configured) in the Grafana Drilldown apps.</p>
+<p>The next step is to start setting up some dashboards - I recommend the <a href="https://grafana.com/grafana/dashboards/1860-node-exporter-full/">Node Exporter Full</a> dashboard for monitoring your host, and <a href="https://grafana.com/grafana/dashboards/19724-y0nei-s-cadvisor-exporter/">y0nei&rsquo;s cAdvisor Dashboard</a> for monitoring Docker. You can import these by selecting &ldquo;Copy ID to clipboard&rdquo;, then pasting it in the ID field in Grafana under &ldquo;Dashboards -&gt; New -&gt; Import&rdquo;.</p>
+<figure><img src="/images/nodeexporter.png"
+    alt="A screenshot of the Node Exporter Full dashboard."><figcaption>
+      <p>Part of the Node Exporter Full dashboard.</p>
+    </figcaption>
+</figure>
+
+<figure><img src="/images/cadvisor.png"
+    alt="A screenshot of the y0nei&#39;s cAdvisor dashboard."><figcaption>
+      <p>Part of y0nei&rsquo;s cAdvisor dashboard.</p>
+    </figcaption>
+</figure>
+
+<p>Hopefully, this helps you get started on your own observability stack. I&rsquo;d recommend consulting Grafana Labs&rsquo; documentation, and I&rsquo;ve linked to it throughout the post wherever I think it&rsquo;s useful.</p>
+<p>From here, you can start instrumenting your own services pretty quickly, especially if they expose Prometheus metrics, or if you set up Beyla. You can also set up alert rules using Grafana&rsquo;s built-in Alertmanager - see <a href="https://samber.github.io/awesome-prometheus-alerts/rules.html">Awesome Prometheus Alerts</a> for some good starter alert rules.</p>
+<h2 id="ps-potential-problems">P.S: Potential problems<a href="#ps-potential-problems" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<p>It&rsquo;s taken me a few tries over time to land on a simple, stable configuration, so I want to share a couple potential issues and how to solve them:</p>
+<ul>
+<li>
+<p>If you use the standard Alloy package on the host, it&rsquo;ll probably run as a <code>systemd</code> service under the <code>alloy</code> user. This means that you&rsquo;ll need to give it permissions to access the journal, syslogs, and Docker socket - or you can run it as root by editing the service file, but that&rsquo;s suboptimal.</p>
+</li>
+<li>
+<p>At the time of writing, there&rsquo;s <a href="https://github.com/grafana/alloy/issues/5021">currently an issue</a> where Alloy will fail to scrape the Docker info properly due to Alloy&rsquo;s cAdvisor being behind upstream. You can get around this by writing the following to <code>/etc/docker/daemon.json</code>, then restarting the Docker service. Be warned that this will remove all your containers (but not volumes), so you&rsquo;ll have to re-run your compose file(s) after:</p>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl">{<span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">&#34;features&#34;: </span>{<span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">&#34;containerd-snapshotter&#34;: </span><span class="kc">false</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>}<span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span>}<span class="w">
+</span></span></span></code></pre></div>
+      </div></div>
+
+  
+    
+<div class="pagination">
+  <div class="pagination__title">
+    <span class="pagination__title-h">Read other posts</span>
+    <hr />
+  </div>
+  <div class="pagination__buttons">
+    
+    
+    
+      <a href="https://kaezone.nz/posts/beyla/" class="button inline next">
+         [<span class="button__text">Observing black-box services on my home server</span>] &gt;
+      </a>
+    
+  </div>
+</div>
+
+
+  
+
+  
+    
+
+  
+</article>
+
+  </div>
+
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright">
+        <span>© 2025 Powered by <a href="https://gohugo.io">Hugo</a></span>
+    
+      <span>:: <a href="https://github.com/panr/hugo-theme-terminal" target="_blank">Theme</a> made by <a href="https://github.com/panr" target="_blank">panr</a></span>
+      </div>
+  </div>
+</footer>
+
+
+
+
+
+
+<script type="text/javascript" src="/bundle.min.js"></script>
+
+
+
+
+
+  
+</div>
+
+
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true });
+  </script>
+
+
+</body>
+</html>
