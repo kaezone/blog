@@ -2,16 +2,18 @@
 <html lang="en">
 <head>
   
-    <title>Posts :: kaezone&#39;s blog</title>
+    <title>Home server observability 101 :: kaezone&#39;s blog</title>
   
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="" />
+<meta name="description" content="In my [previous post](/posts/beyla) I wrote a bit about how I monitor my home server, and how I use Grafana Beyla to get traces and metrics from services with no existing telemetry.
+
+This time, I&#39;m going to go through how to set up your own observability stack for home server scale, and how to start collecting metrics, logs, and traces." />
 <meta name="keywords" content="" />
 
   <meta name="robots" content="noodp" />
 
-<link rel="canonical" href="https://kaezone.nz/posts/" />
+<link rel="canonical" href="https://kaezone.nz/posts/home-server-observability/" />
 
 
 
@@ -76,10 +78,12 @@
 
 
 <meta property="og:locale" content="en" />
-<meta property="og:type" content="website" />
-<meta property="og:title" content="Posts">
-<meta property="og:description" content="" />
-<meta property="og:url" content="https://kaezone.nz/posts/" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Home server observability 101">
+<meta property="og:description" content="In my [previous post](/posts/beyla) I wrote a bit about how I monitor my home server, and how I use Grafana Beyla to get traces and metrics from services with no existing telemetry.
+
+This time, I&#39;m going to go through how to set up your own observability stack for home server scale, and how to start collecting metrics, logs, and traces." />
+<meta property="og:url" content="https://kaezone.nz/posts/home-server-observability/" />
 <meta property="og:site_name" content="kaezone&#39;s blog" />
 
   <meta property="og:image" content="https://kaezone.nz/og-image.png">
@@ -88,10 +92,10 @@
 <meta property="og:image:height" content="627">
 
 
+  <meta property="article:published_time" content="2025-12-09 21:18:09 &#43;1300 NZDT" />
 
 
 
-  <link href="/posts/index.xml" rel="alternate" type="application/rss+xml" title="kaezone&#39;s blog" />
 
 
 
@@ -126,71 +130,55 @@
 
   <div class="content">
     
+<article class="post">
+  <h1 class="post-title">
+    <a href="https://kaezone.nz/posts/home-server-observability/">Home server observability 101</a>
+  </h1>
+  <div class="post-meta"><time class="post-date">2025-12-09</time></div>
+
   
-  <div class="posts">
-    
-      <article class="post on-list">
-        <h2 class="post-title">
-          <a href="https://kaezone.nz/posts/home-server-observability/">Home server observability 101</a>
-        </h2>
-        <div class="post-meta"><time class="post-date">2025-12-09</time></div>
-
-        
-
-        
+  
 
 
-        <div class="post-content">
-          
-            <p><p>In my <a href="/posts/beyla/">previous post</a> I wrote a bit about how I monitor my home server, and how I use Grafana Beyla to get traces and metrics from services with no existing telemetry.</p>
+  
+
+  <div class="post-content"><div>
+        <p>In my <a href="/posts/beyla/">previous post</a> I wrote a bit about how I monitor my home server, and how I use Grafana Beyla to get traces and metrics from services with no existing telemetry.</p>
 <p>This time, I&rsquo;m going to go through how to set up your own observability stack for home server scale, and how to start collecting metrics, logs, and traces.</p>
-</p>
-          
-        </div>
+<h2 id="why-bother">Why bother?<a href="#why-bother" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<p>If you&rsquo;re running a homelab, you&rsquo;re probably somewhat interested in monitoring already - it&rsquo;s an important part of operating actual systems, and the whole point of homelabbing is to <del>burn money</del> learn new things.</p>
+<p>For home server folks, you might sit in the same category as above, but it can still be pretty useful in practice. It&rsquo;s pretty annoying to sit down to watch a movie only to find out your server has fallen over (ask me how I know), so having robust monitoring can alert you before issues happen, and help you diagnose them when they do.</p>
+<p>The last reason is because graphs are cool. More graphs is more good.</p>
+<h2 id="telemetry-signals-and-standards">Telemetry signals and standards<a href="#telemetry-signals-and-standards" class="hanchor" ariaLabel="Anchor">#</a> </h2>
 
-        
-           <div>
-            <a class="read-more button inline" href="/posts/home-server-observability/">[Read more]</a>
-          </div>
-        
-      </article>
+      </div></div>
+
+  
     
-      <article class="post on-list">
-        <h2 class="post-title">
-          <a href="https://kaezone.nz/posts/beyla/">Observing black-box services on my home server</a>
-        </h2>
-        <div class="post-meta"><time class="post-date">2025-12-09</time></div>
-
-        
-
-        
-
-
-        <div class="post-content">
-          
-            <p><p>I&rsquo;ve been running a home media server / homelab for about six months now, running the usual bunch of services with Jellyfin to serve everything up. Besides a brief misadventure with Kubernetes, it&rsquo;s been pretty reliable, and I don&rsquo;t use a single streaming service anymore.</p>
-<p>The only issue is that I&rsquo;m a security analyst by trade, so I&rsquo;m obsessed with making dashboards, and none of these services provide any metrics. Thankfully, there&rsquo;s a way around that.</p>
-</p>
-          
-        </div>
-
-        
-           <div>
-            <a class="read-more button inline" href="/posts/beyla/">[Read more]</a>
-          </div>
-        
-      </article>
-    
-
-    <div class="pagination">
+<div class="pagination">
+  <div class="pagination__title">
+    <span class="pagination__title-h">Read other posts</span>
+    <hr />
+  </div>
   <div class="pagination__buttons">
     
     
     
+      <a href="https://kaezone.nz/posts/beyla/" class="button inline next">
+         [<span class="button__text">Observing black-box services on my home server</span>] &gt;
+      </a>
+    
   </div>
 </div>
 
-  </div>
+
+  
+
+  
+    
+
+  
+</article>
 
   </div>
 
