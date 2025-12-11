@@ -1,6 +1,6 @@
 +++
 title = "Home server observability 101"
-date = "2025-12-09T21:18:09+13:00"
+date = "2025-12-10T20:57:00+13:00"
 #dateFormat = "2006-01-02" # This value can be configured for per-post date formatting
 description = "In my [previous post](/posts/beyla) I wrote a bit about how I monitor my home server, and how I use Grafana Beyla to get traces and metrics from services with no existing telemetry.\n\nThis time, I'm going to go through how to set up your own observability stack for home server scale, and how to start collecting metrics, logs, and traces."
 showFullContent = false

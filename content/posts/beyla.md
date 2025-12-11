@@ -1,6 +1,6 @@
 +++
 title = "Observing black-box services on my home server"
-date = "2025-12-09T14:21:43+13:00"
+date = "2025-12-09T17:17:00+13:00"
 #dateFormat = "2006-01-02" # This value can be configured for per-post date formatting
 description = "I've been running a home media server / homelab for about six months now, running the usual bunch of services with Jellyfin to serve everything up. Besides a brief misadventure with Kubernetes, it's been pretty reliable, and I don't use a single streaming service anymore.\n\nThe only issue is that I'm a security analyst by trade, so I'm obsessed with making dashboards, and none of these services provide any metrics. Thankfully, there's a way around that."
 showFullContent = false
