@@ -23,7 +23,7 @@ This time, I&#39;m going to go through how to set up your own observability stac
   <link rel="stylesheet" href="https://kaezone.nz/css/buttons.min.86f6b4c106b6c6eb690ae5203d36b442c1f66f718ff4e8164fa86cf6c61ad641.css">
 
   
-  <link rel="stylesheet" href="https://kaezone.nz/css/code.min.d529ea4b2fb8d34328d7d31afc5466d5f7bc2f0bc9abdd98b69385335d7baee4.css">
+  <link rel="stylesheet" href="https://kaezone.nz/css/code.min.c4581949edab7810737609fc5568852bcd908945f14561e366dcd2300a370545.css">
 
   
   <link rel="stylesheet" href="https://kaezone.nz/css/fonts.min.026f7f6aa6633536aa419c117113e3b1a0732343b38bbc5f161eb751cfcb9db2.css">
@@ -231,7 +231,7 @@ G[Tempo] ---|queried by| H[Grafana]
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">ports</span><span class="p">:</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="m">9090</span><span class="p">:</span><span class="m">9090</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l">unless-stopped</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">volumes</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="nt">volumes</span><span class="p">:</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">data</span><span class="p">:</span><span class="w">
 </span></span></span></code></pre></div><p>You can mount your <code>/etc/prometheus</code> folder from wherever you like. Take note of the <code>--web.enable-remote-write-receiver</code> argument - this is to allow Alloy to push metrics to Prometheus, instead of Prometheus pulling them itself.</p>
 <p>For the <code>prometheus.yml</code> file, it&rsquo;s pretty basic:</p>
@@ -239,12 +239,12 @@ G[Tempo] ---|queried by| H[Grafana]
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">scrape_interval</span><span class="p">:</span><span class="w"> </span><span class="l">15s</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">evaluation_interval</span><span class="p">:</span><span class="w"> </span><span class="l">15s</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">scrape_configs</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="nt">scrape_configs</span><span class="p">:</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">job_name</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;prometheus&#39;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">static_configs</span><span class="p">:</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">targets</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s1">&#39;localhost:9090&#39;</span><span class="p">]</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">rule_files</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="nt">rule_files</span><span class="p">:</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="s2">&#34;/etc/prometheus/rules/*.yml&#34;</span><span class="w">
 </span></span></span></code></pre></div><p>This configuration file just sets Prometheus to scrape its own metrics, and provides a location to import alerting rules from - we won&rsquo;t go too much into that though.</p>
 <p>It&rsquo;s worth noting that Prometheus pretty much only stores things locally. If you want to use S3 or other remote storage, you may want to use Grafana Mimir instead.</p>
@@ -261,7 +261,7 @@ G[Tempo] ---|queried by| H[Grafana]
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">ports</span><span class="p">:</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="m">3100</span><span class="p">:</span><span class="m">3100</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l">unless-stopped</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">volumes</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="nt">volumes</span><span class="p">:</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">data</span><span class="p">:</span><span class="w">
 </span></span></span></code></pre></div><p>For the <code>loki.yaml</code> configuration file, I use <a href="https://grafana.com/docs/loki/latest/configure/examples/configuration-examples/#1-local-configuration-exampleyaml">Grafana Labs&rsquo; local config example</a>. This configuration stores everything locally, but Loki does have support for S3 and a pile of other remote storage options.</p>
 <h3 id="tempo">Tempo<a href="#tempo" class="hanchor" ariaLabel="Anchor">#</a> </h3>
@@ -280,7 +280,7 @@ G[Tempo] ---|queried by| H[Grafana]
 </span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="m">4317</span><span class="p">:</span><span class="m">4317</span><span class="w"> </span><span class="c"># gRPC OpenTelemetry</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="m">4318</span><span class="p">:</span><span class="m">4318</span><span class="w"> </span><span class="c"># HTTP OpenTelemetry</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l">unless-stopped</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">volumes</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="nt">volumes</span><span class="p">:</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">data</span><span class="p">:</span><span class="w">
 </span></span></span></code></pre></div><p>Similarly to Loki, I use <a href="https://github.com/grafana/tempo/blob/main/example/docker-compose/local/tempo.yaml">Grafana Labs&rsquo; local config example</a>. I recommend removing the <code>per_tenant_override_config</code> line, as it interferes with trace metrics in Grafana, and I remove the unused receivers (Jaeger, Zipkin, OpenCensus) for cleanliness. You can use S3 or other storage backends here as well.</p>
 <h2 id="grafana">Grafana<a href="#grafana" class="hanchor" ariaLabel="Anchor">#</a> </h2>
@@ -296,7 +296,7 @@ G[Tempo] ---|queried by| H[Grafana]
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">ports</span><span class="p">:</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="m">3000</span><span class="p">:</span><span class="m">3000</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l">unless-stopped</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">volumes</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="nt">volumes</span><span class="p">:</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">data</span><span class="p">:</span><span class="w">
 </span></span></span></code></pre></div><p>No config files here. Once Grafana is running, you can head to <code>&lt;your server&gt;:3000</code>, log in as <code>admin:admin</code>, set your password, and configure your data sources.</p>
 <p>Head to &ldquo;Connections -&gt; Data sources&rdquo;, and add each of your databases. You&rsquo;ll just need to enter the URL and hit &ldquo;Save and test&rdquo; - if you run everything in the same Docker network, you can just use <code>prometheus:9009</code>, <code>loki:3100</code>, and <code>tempo:3200</code>.</p>
@@ -313,57 +313,57 @@ G[Tempo] ---|queried by| H[Grafana]
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">logging {</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">level = &#34;info&#34;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">format = &#34;logfmt&#34;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span>}<span class="w">
+</span></span></span><span class="line"><span class="cl">}<span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">// writer for Prometheus</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">prometheus.remote_write &#34;metrics&#34; {</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="l">// writer for Prometheus</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="l">prometheus.remote_write &#34;metrics&#34; {</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">endpoint {</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="l">url = &#34;http://localhost:9090/api/v1/write&#34;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span>}<span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span>}<span class="w">
+</span></span></span><span class="line"><span class="cl">}<span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">// writer for Loki</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">loki.write &#34;logs&#34; {</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="l">// writer for Loki</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="l">loki.write &#34;logs&#34; {</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">endpoint {</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="l">url = &#34;http://localhost:3100/loki/api/v1/push&#34;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span>}<span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span>}<span class="w">
+</span></span></span><span class="line"><span class="cl">}<span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">// writer for Tempo</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">otelcol.exporter.otlphttp &#34;traces&#34; {</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="l">// writer for Tempo</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="l">otelcol.exporter.otlphttp &#34;traces&#34; {</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">client {</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="l">endpoint = &#34;http://localhost:4318&#34;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span>}<span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span>}<span class="w">
+</span></span></span><span class="line"><span class="cl">}<span class="w">
 </span></span></span></code></pre></div><p>Our metrics and logs collection will plumb into these writers. First, we&rsquo;ll collect Alloy&rsquo;s own metrics:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">// expose Alloy metrics</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">prometheus.exporter.self &#34;alloy&#34; { }</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="l">prometheus.exporter.self &#34;alloy&#34; { }</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">// scrape those metrics and send to Prometheus</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">prometheus.scrape &#34;alloy&#34; {</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="l">// scrape those metrics and send to Prometheus</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="l">prometheus.scrape &#34;alloy&#34; {</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">targets = prometheus.exporter.self.alloy.targets</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">forward_to = [prometheus.remote_write.metrics.receiver]</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span>}<span class="w">
+</span></span></span><span class="line"><span class="cl">}<span class="w">
 </span></span></span></code></pre></div><p>As you can see, collecting Prometheus metrics is pretty easy - we just need a <code>prometheus.scrape</code> component that takes a target and a writer to send them to. If you have any apps exposing a <code>/metrics</code> endpoint, you can scrape them by setting <code>targets = [{__address__ = &quot;localhost:&lt;PORT&gt;&quot;}]</code>.</p>
 <p>Next, we&rsquo;ll collect Docker metrics. Be warned that if you&rsquo;re using a standard Docker setup, you&rsquo;ll need to add the <code>alloy</code> user to the <code>docker</code> group, or run Alloy as root:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">// scrape Docker metrics</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">prometheus.exporter.cadvisor &#34;docker&#34; {</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="l">prometheus.exporter.cadvisor &#34;docker&#34; {</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">docker_host = &#34;unix:///var/run/docker.sock&#34;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">store_container_labels = true</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">docker_only = true</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span>}<span class="w">
+</span></span></span><span class="line"><span class="cl">}<span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">prometheus.scrape &#34;docker&#34; {</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="l">prometheus.scrape &#34;docker&#34; {</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">targets = prometheus.exporter.cadvisor.docker.targets</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">forward_to = [prometheus.remote_write.metrics.receiver]</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span>}<span class="w">
+</span></span></span><span class="line"><span class="cl">}<span class="w">
 </span></span></span></code></pre></div><p>Next, the Docker logs:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">// scrape Docker logs   </span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">discovery.docker &#34;docker&#34; {</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="l">discovery.docker &#34;docker&#34; {</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">host = &#34;unix:///var/run/docker.sock&#34;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span>}<span class="w">
+</span></span></span><span class="line"><span class="cl">}<span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">discovery.relabel &#34;logs_integrations_docker&#34; {</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="l">discovery.relabel &#34;logs_integrations_docker&#34; {</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">targets = []</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">rule {</span><span class="w">
@@ -371,15 +371,15 @@ G[Tempo] ---|queried by| H[Grafana]
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="l">regex = &#34;/(.*)&#34;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="l">target_label = &#34;service_name&#34;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span>}<span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span>}<span class="w">
+</span></span></span><span class="line"><span class="cl">}<span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">loki.source.docker &#34;docker&#34; {</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="l">loki.source.docker &#34;docker&#34; {</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">host       = &#34;unix:///var/run/docker.sock&#34;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">targets    = discovery.docker.docker.targets</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">labels     = {&#34;platform&#34; = &#34;docker&#34;}</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">relabel_rules = discovery.relabel.logs_integrations_docker.rules</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">forward_to = [loki.write.logs.receiver]</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span>}<span class="w">
+</span></span></span><span class="line"><span class="cl">}<span class="w">
 </span></span></span></code></pre></div><p>This block does a bit of relabeling magic to add the Docker container name as a <code>service_name</code> label.</p>
 <p>Finally, the host metrics and logs. I&rsquo;d recommend following the <a href="https://grafana.com/docs/alloy/latest/monitor/monitor-linux/">Grafana Labs documentation</a> for this one, as it&rsquo;s a pretty big chunk of config.</p>
 <p>Once you&rsquo;re all done writing the file, save it and run <code>systemctl restart alloy</code>.</p>
@@ -417,7 +417,7 @@ G[Tempo] ---|queried by| H[Grafana]
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">&#34;features&#34;: </span>{<span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">&#34;containerd-snapshotter&#34;: </span><span class="kc">false</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span>}<span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span>}<span class="w">
+</span></span></span><span class="line"><span class="cl">}<span class="w">
 </span></span></span></code></pre></div>
       </div></div>
 
@@ -430,6 +430,12 @@ G[Tempo] ---|queried by| H[Grafana]
   </div>
   <div class="pagination__buttons">
     
+      <a href="https://kaezone.nz/posts/libreboot/" class="button inline prev">
+        &lt; [<span class="button__text">Installing Libreboot on my ThinkPad T480s</span>]
+      </a>
+    
+    
+      ::
     
     
       <a href="https://kaezone.nz/posts/beyla/" class="button inline next">
@@ -455,7 +461,7 @@ G[Tempo] ---|queried by| H[Grafana]
   <div class="footer__inner">
     
       <div class="copyright">
-        <span>© 2025 Powered by <a href="https://gohugo.io">Hugo</a></span>
+        <span>© 2026 Powered by <a href="https://gohugo.io">Hugo</a></span>
     
       <span>:: <a href="https://github.com/panr/hugo-theme-terminal" target="_blank">Theme</a> made by <a href="https://github.com/panr" target="_blank">panr</a></span>
       </div>

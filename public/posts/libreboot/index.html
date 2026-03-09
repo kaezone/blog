@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    <title>Installing Libreboot on my ThinkPad T480s :: kaezone&#39;s blog</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="I recently found out that Libreboot, a distribution of open-source boot firmware, had been ported to the ThinkPad T480 and T480s. I had some time off work, and decided to install it on my laptop for fun.
+
+In this post, I&#39;ll walk through the process I used to install it, and some general tips for anyone trying to do the same." />
+<meta name="keywords" content="" />
+
+  <meta name="robots" content="noodp" />
+
+<link rel="canonical" href="https://kaezone.nz/posts/libreboot/" />
+
+
+
+
+
+  
+  <link rel="stylesheet" href="https://kaezone.nz/css/buttons.min.86f6b4c106b6c6eb690ae5203d36b442c1f66f718ff4e8164fa86cf6c61ad641.css">
+
+  
+  <link rel="stylesheet" href="https://kaezone.nz/css/code.min.c4581949edab7810737609fc5568852bcd908945f14561e366dcd2300a370545.css">
+
+  
+  <link rel="stylesheet" href="https://kaezone.nz/css/fonts.min.026f7f6aa6633536aa419c117113e3b1a0732343b38bbc5f161eb751cfcb9db2.css">
+
+  
+  <link rel="stylesheet" href="https://kaezone.nz/css/footer.min.eb8dfc2c6a7eafa36cd3ba92d63e69e849e2200e0002a228d137f236b09ecd75.css">
+
+  
+  <link rel="stylesheet" href="https://kaezone.nz/css/gist.min.a751e8b0abe1ba8bc53ced52a38b19d8950fe78ca29454ea8c2595cf26aad5c0.css">
+
+  
+  <link rel="stylesheet" href="https://kaezone.nz/css/header.min.75c7eb0e2872d95ff48109c6647d0223a38db52e2561dd87966eb5fc7c6bdac6.css">
+
+  
+  <link rel="stylesheet" href="https://kaezone.nz/css/main.min.36833afd348409fc6c3d09d0897c5833d9d5bf1ff31f5e60ea3ee42ce2b1268c.css">
+
+  
+  <link rel="stylesheet" href="https://kaezone.nz/css/menu.min.3c17467ebeb3d38663dce68f71f519901124fa5cbb4519b2fb0667a21e9aca39.css">
+
+  
+  <link rel="stylesheet" href="https://kaezone.nz/css/pagination.min.bbb986dbce00a5ce5aca0504b7925fc1c581992a4bf57f163e5d69cc1db7d836.css">
+
+  
+  <link rel="stylesheet" href="https://kaezone.nz/css/post.min.e6dddd258e64c83e05cec0cd49c05216742d42fc8ecbfbe6b67083412b609bd3.css">
+
+  
+  <link rel="stylesheet" href="https://kaezone.nz/css/syntax.min.a0773cce9310cb6d8ed23e50f005448facf29a53001b57e038828daa466b25c0.css">
+
+  
+  <link rel="stylesheet" href="https://kaezone.nz/css/terminal.min.e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.css">
+
+  
+  <link rel="stylesheet" href="https://kaezone.nz/css/terms.min.b81791663c3790e738e571cdbf802312390d30e4b1d8dc9d814a5b5454d0ac11.css">
+
+
+<link rel="stylesheet" href="https://kaezone.nz/terminal.css">
+
+<link rel="stylesheet" href="https://kaezone.nz/style.css">
+
+
+<link rel="shortcut icon" href="https://kaezone.nz/favicon.png">
+<link rel="apple-touch-icon" href="https://kaezone.nz/apple-touch-icon.png">
+
+
+<meta name="twitter:card" content="summary" />
+
+  
+    <meta name="twitter:site" content="" />
+  
+    <meta name="twitter:creator" content="" />
+
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Installing Libreboot on my ThinkPad T480s">
+<meta property="og:description" content="I recently found out that Libreboot, a distribution of open-source boot firmware, had been ported to the ThinkPad T480 and T480s. I had some time off work, and decided to install it on my laptop for fun.
+
+In this post, I&#39;ll walk through the process I used to install it, and some general tips for anyone trying to do the same." />
+<meta property="og:url" content="https://kaezone.nz/posts/libreboot/" />
+<meta property="og:site_name" content="kaezone&#39;s blog" />
+
+  <meta property="og:image" content="https://kaezone.nz/og-image.png">
+
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="627">
+
+
+  <meta property="article:published_time" content="2026-03-09 19:46:27 &#43;1300 NZDT" />
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body>
+
+
+<div class="container center">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    kaezone
+  </div>
+</a>
+
+    </div>
+    
+    
+  </div>
+  
+</header>
+
+
+  <div class="content">
+    
+<article class="post">
+  <h1 class="post-title">
+    <a href="https://kaezone.nz/posts/libreboot/">Installing Libreboot on my ThinkPad T480s</a>
+  </h1>
+  <div class="post-meta"><time class="post-date">2026-03-09</time></div>
+
+  
+  
+
+
+  
+
+  <div class="post-content"><div>
+        <p>I recently found out that Libreboot, a distribution of open-source boot firmware, had been ported to the Thinkpad T480 and T480s. I had some time off work, and decided to install it on my laptop for fun.</p>
+<p>In this post, I&rsquo;ll walk through the process I used to install it, and some general tips for anyone trying to do the same. For those who aren&rsquo;t full-contact computer nerds, it&rsquo;s a pretty complex and fraught process, but I hope I can provide some useful info regardless.</p>
+<p>I&rsquo;m also writing this post on my now-Librebooted laptop!</p>
+<h2 id="libreboot">Libreboot<a href="#libreboot" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<p><a href="https://libreboot.org/">Libreboot</a> is a free and open-source distribution of boot firmware (i.e. BIOS/UEFI) for laptops, desktops, and other machines, based on the <a href="https://www.coreboot.org/">coreboot</a> project. The idea is to replace the completely proprietary firmware on your machine with something as open as possible, eradicating as many proprietary blobs as possible while still retaining functionality.</p>
+<p>This is, of course, some heavy computer-toucher stuff - most free software folks are fine with just running a regular Linux distro, but if you&rsquo;re a big time fan of de-blobbing, or own a vast selection of ThinkPads, it might be up your alley.</p>
+<p>There are some practical reasons to install Libreboot or coreboot as well, beyond the philosophical reasons. For laptops with vendor allow-listing for specific hardware like SSDs or DIMMs, open firmware completely removes those. On most supported Intel machines, it also disables the <a href="https://en.wikipedia.org/wiki/Intel_Management_Engine">Intel Management Engine</a> as much as possible - I won&rsquo;t go into the background and beliefs surrounding the Intel ME, but I know some folks would prefer it disabled.</p>
+<h2 id="thinkpads-and-deguard">ThinkPads and deguard<a href="#thinkpads-and-deguard" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<p>I&rsquo;ve been running a ThinkPad T480s for a good few years, and I&rsquo;m a huge fan of it. It&rsquo;s pretty well-built, they&rsquo;re extremely cheap ex-lease, and even though it only has an Intel 8th Gen chip, it still has plenty of grunt for anything I need.</p>
+<p>Most of Libreboot&rsquo;s supported boards are quite old, around Haswell (4th Gen) era or so - far older than the T480s. This is mainly a result of some security features present on newer hardware - namely, Intel Boot Guard, which prevents running unsigned code at boot-time and sits in the Intel ME, which itself only runs signed code.</p>
+<p>Back in 2024, support for the T480s (and its chunkier T480 brother) was <a href="https://libreboot.org/news/libreboot20241206.html">added to Libreboot</a>. This was thanks to some bugs in the Intel ME (<a href="https://www.intel.com/content/www/us/en/security-center/advisory/intel-sa-00086.html">INTEL-SA-00086</a>) that allow for arbitrary code execution before Boot Guard is enforced, which the <a href="https://github.com/coreboot/deguard"><code>deguard</code></a> tool exploits. <code>deguard</code> and <a href="https://github.com/corna/me_cleaner"><code>me_cleaner</code></a> are integrated into the Libreboot build process, resulting in a firmware image that bypasses Boot Guard, then completely kneecaps the Intel ME.</p>
+<h2 id="rtfming">RTFM&rsquo;ing<a href="#rtfming" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<p>Installing custom boot firmware is a pretty complex process, and if you&rsquo;re planning on doing it, you really, really should read the <a href="https://libreboot.org/docs/">Libreboot documentation</a> front to back. It&rsquo;s a lot easier with Libreboot than building and flashing plain coreboot though - the whole point of Libreboot is to provide a relatively simple build system and good documentation.</p>
+<p>In order to install Libreboot, you unfortunately need some hardware. Most laptops lock out the firmware flash, which is generally a good thing, but it does prevent flashing custom firmware from software. The main thing you&rsquo;ll need is a test clip to attach to the SOIC-8 flash chip, and something to program it with - I used a Raspberry Pi Pico.</p>
+<figure><img src="/images/5250.JPG"
+    alt="An image of a Pomona 5250 clip."><figcaption>
+      <p>A Pomona 5250 clip - the recommended brand.</p>
+    </figcaption>
+</figure>
+
+<p>This is a Pomona 5250 clip - they&rsquo;re the recommended brand to use, but a bit pricey. I ended up using some cheap AliExpress chip, and I definitely would not recommend it - it was <em>extremely</em> fiddly to attach.</p>
+<p>Once you have a clip and a programmer, wire it up as described in the documentation. The next step is to actually build a flashable image for the machine. There&rsquo;s two ways you can do this - either use the latest release tarball and inject the necessary vendor blobs, or build it from source. Initially, I just used the release tarball, but I wanted to make some tweaks to the configuration.</p>
+<p>Notably, you should also update the Lenovo firmware to the latest version before you start - there&rsquo;s some fun bugs with the Thunderbolt chip in older firmware that can break fast-charging after a number of charge cycles, among other things. If this has already happened to you, the Libreboot docs have some info on how to fix it.</p>
+<h2 id="building-a-release-image">Building a release image<a href="#building-a-release-image" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<p>The documentation has quite a bit of exposition for the process of using a release tarball, but it&rsquo;s really not that complicated - everything is now automated in recent versions, and the documentation doesn&rsquo;t reflect that well.</p>
+<p>The first step is to download a release tarball from the site, then clone the <a href="https://codeberg.org/libreboot/lbmk/"><code>lbmk</code> repository</a> on a Linux machine - this is Libreboot&rsquo;s build system. Setting up a release image goes as follows:</p>
+<ul>
+<li>Run <code>sudo ./mk dependencies &lt;distro&gt;</code> to install the (many) necessary dependencies.</li>
+<li>Run <code>./mk inject &lt;tarball&gt;</code> to inject the vendor blobs - for example, I ran <code>./mk inject libreboot-26.01rev1_t480s_vfsp_16mb.tar.xz</code>.</li>
+<li>This will take quite a while, and at one point it&rsquo;ll start looking like it&rsquo;s dumping a pile of errors related to extracting vendor files - this is fine, it&rsquo;s just noisy.</li>
+<li>Once complete, you should be able to extract the tarballs, and grab your prepared image.</li>
+</ul>
+<p>The prepared tarball will have a bunch of images with names like <code>seagrub_t480s_vfsp_16mb_libgfxinit_corebootfb_usqwerty.rom</code>:</p>
+<ul>
+<li><code>seagrub</code> is the payload. You probably want this one.</li>
+<li><code>t480s_vfsp_16mb</code> is the board configuration.</li>
+<li><code>libgfxinit_corebootfb</code> is the video mode - you want this one.</li>
+<li><code>usqwerty</code> is the keyboard layout.</li>
+</ul>
+<h2 id="building-from-source">Building from source<a href="#building-from-source" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<p>Compiling Libreboot is actually not that much more difficult, it&rsquo;s all very automated. This also allows you to set some config options, like turning Hyperthreading back on and swapping the Fn and Ctrl keys - the former is disabled by default for security reasons.</p>
+<ul>
+<li>Install dependencies as before.</li>
+<li>Run <code>./mk -m coreboot t480s_vfsp_16mb</code> to pull up the configuration. You can enable the Hyperthreading and Fn-Ctrl swap options under the Chipset menu. Save and exit, then it&rsquo;ll pop up again - do the same thing again.</li>
+<li>Run <code>./mk -b coreboot t480s_vfsp_16mb</code> to build the images. This will automatically inject the vendor blobs for you.</li>
+<li>The final ready-to-use images will be under <code>bin/t480s_vfsp_16mb</code>.</li>
+</ul>
+<h2 id="a-little-hardware-hacking">A little hardware hacking<a href="#a-little-hardware-hacking" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<p>Now it&rsquo;s time to actually flash the firmware. You&rsquo;ll need to pop off the back cover and remove the battery - see this <a href="https://www.ifixit.com/Guide/Lenovo&#43;ThinkPad&#43;T480s&#43;Battery&#43;Replacement/144009">iFixit guide</a>. The firmware flash chip is located next to the DIMM slot, it&rsquo;s a little SOIC-8 8-pin IC surrounded by tiny resistors.</p>
+<p>On the note of those resistors, it&rsquo;s important to be incredibly careful while hooking up the flash chip. If it isn&rsquo;t seated correctly and pops off, or you&rsquo;re not careful putting it on, you can knock some of them off and gift yourself a new microsoldering project. I recommend only opening the clip as much as you need to seat it on the pins, and giving it a gentle wiggle to ensure it&rsquo;s secure - I buzzed out the leads with a multimeter to check for any shorts as well.</p>
+<figure><img src="/images/flashing.jpg"
+    alt="A photo of my programmer seated on my T480s board."><figcaption>
+      <p>Here&rsquo;s my cheapo clip connected to the flash IC.</p>
+    </figcaption>
+</figure>
+
+<p>It&rsquo;s incredibly important to <strong>never move the clip with the programmer plugged in.</strong> You&rsquo;ll probably poke something you don&rsquo;t want to with 3.3V. Connect the clip, plug in the programmer, then do the reverse to disconnect.</p>
+<p>Next up, make at least two dumps of the original firmware and verify them. You&rsquo;ll need to use the <code>flashprog</code> tool for this, which is bundled with Libreboot - you can also install it with <code>pacman</code> if you&rsquo;re on Arch.</p>
+<ul>
+<li>Run <code>sudo flashprog -p serprog:dev=/dev/ttyACMx,spispeed=16M</code> to check if the chip is detected - it should be some variety of Winbond.</li>
+<li>Run <code>sudo flashprog -p serprog:dev=/dev/ttyACMx,spispeed=16M -r dump1.bin --progress</code> to dump the flash, and do this a second time to <code>dump2.bin</code>.</li>
+<li>Check if the dump worked by doing <code>strings dump1.bin</code> - you should see some actual strings in there.</li>
+<li>Compare the two dumps with <code>sha256sum dump*</code> - they should be identical.</li>
+<li>Finally, flash Libreboot with <code>sudo flashprog -p serprog:dev=/dev/ttyACMx,spispeed=16M -w seagrub_t480s_vfsp_16mb_libgfxinit_corebootfb_usqwerty.rom</code>.</li>
+</ul>
+<p>Now you can disconnect the programmer, remove the clip <em>extremely carefully</em>, and re-assemble the laptop. You should be greeted with the Libreboot boot screen!</p>
+<h2 id="conclusion">Conclusion<a href="#conclusion" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<p>Overall, even though I don&rsquo;t have much actual reason to use Libreboot, it was pretty fun getting it to run on my laptop. The flashing process is pretty nerve-wracking, but I do enjoy a bit of hardware hacking.</p>
+<p>In terms of functionality, I haven&rsquo;t noticed any issues at all. It booted straight up into my Arch install like nothing changed, and everything seems to work great - battery life is still as good as before, Wi-Fi is fine, and all the Fn controls work.</p>
+<p>I definitely wouldn&rsquo;t recommend this to anybody (or most people at all), but if you&rsquo;re a turbo-nerd like me and don&rsquo;t mind a bit of hardware work, it&rsquo;s pretty neat.</p>
+<p>As a bonus, you get to be One Of Those(tm) ThinkPad girls at the end of it!</p>
+
+      </div></div>
+
+  
+    
+<div class="pagination">
+  <div class="pagination__title">
+    <span class="pagination__title-h">Read other posts</span>
+    <hr />
+  </div>
+  <div class="pagination__buttons">
+    
+    
+    
+      <a href="https://kaezone.nz/posts/home-server-observability/" class="button inline next">
+         [<span class="button__text">Home server observability 101</span>] &gt;
+      </a>
+    
+  </div>
+</div>
+
+
+  
+
+  
+    
+
+  
+</article>
+
+  </div>
+
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright">
+        <span>© 2026 Powered by <a href="https://gohugo.io">Hugo</a></span>
+    
+      <span>:: <a href="https://github.com/panr/hugo-theme-terminal" target="_blank">Theme</a> made by <a href="https://github.com/panr" target="_blank">panr</a></span>
+      </div>
+  </div>
+</footer>
+
+
+
+
+
+
+<script type="text/javascript" src="/bundle.min.js"></script>
+
+
+
+
+
+  
+</div>
+
+
+
+</body>
+</html>

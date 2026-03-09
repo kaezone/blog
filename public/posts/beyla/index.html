@@ -23,7 +23,7 @@ The only issue is that I&#39;m a security analyst by trade, so I&#39;m obsessed 
   <link rel="stylesheet" href="https://kaezone.nz/css/buttons.min.86f6b4c106b6c6eb690ae5203d36b442c1f66f718ff4e8164fa86cf6c61ad641.css">
 
   
-  <link rel="stylesheet" href="https://kaezone.nz/css/code.min.d529ea4b2fb8d34328d7d31afc5466d5f7bc2f0bc9abdd98b69385335d7baee4.css">
+  <link rel="stylesheet" href="https://kaezone.nz/css/code.min.c4581949edab7810737609fc5568852bcd908945f14561e366dcd2300a370545.css">
 
   
   <link rel="stylesheet" href="https://kaezone.nz/css/fonts.min.026f7f6aa6633536aa419c117113e3b1a0732343b38bbc5f161eb751cfcb9db2.css">
@@ -170,7 +170,7 @@ The only issue is that I&#39;m a security analyst by trade, so I&#39;m obsessed 
 <p>Beyla is another bit of Grafana Labs kit - and soon to be an <a href="https://grafana.com/blog/2025/05/07/opentelemetry-ebpf-instrumentation-beyla-donation/">official OpenTelemetry project</a> - that uses eBPF to generate traces and metrics for applications by monitoring network traffic. For those unaware, eBPF is a Linux technology for loading small programs in the kernel at runtime, usually for networking-related tasks.</p>
 <p>Beyla is built into Alloy, so with a bit of configuration, you can set it up quite quickly:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">// run Beyla against services</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">beyla.ebpf &#34;services&#34; {</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="l">beyla.ebpf &#34;services&#34; {</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">ebpf {</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="l">track_request_headers = true</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="l">context_propagation = &#34;all&#34;</span><span class="w">
@@ -187,21 +187,21 @@ The only issue is that I&#39;m a security analyst by trade, so I&#39;m obsessed 
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">output {</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="l">traces = [otelcol.processor.batch.default.input]</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span>}<span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span>}<span class="w">
+</span></span></span><span class="line"><span class="cl">}<span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">// scrape and ship off to Prometheus</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">prometheus.scrape &#34;beyla&#34; {</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="l">// scrape and ship off to Prometheus</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="l">prometheus.scrape &#34;beyla&#34; {</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">targets = beyla.ebpf.services.targets</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">honor_labels = true</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">forward_to = [prometheus.remote_write.metrics.receiver]</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span>}<span class="w">
+</span></span></span><span class="line"><span class="cl">}<span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">// batch and ship off to Tempo</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">otelcol.processor.batch &#34;default&#34; {</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="l">// batch and ship off to Tempo</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="l">otelcol.processor.batch &#34;default&#34; {</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">output {</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="l">traces  = [otelcol.exporter.otlphttp.traces.input]</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span>}<span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span>}<span class="w">
+</span></span></span><span class="line"><span class="cl">}<span class="w">
 </span></span></span></code></pre></div><p>You can point Beyla at any comma-separated list of ports, and it&rsquo;ll automatically instrument them, spitting out trace spans and RED (Rate-Error-Duration) metrics. In this case, I&rsquo;m only looking at executables running inside a container.</p>
 <h3 id="traces">Traces<a href="#traces" class="hanchor" ariaLabel="Anchor">#</a> </h3>
 <p>With everything wired up, trace spans are now viewable in Grafana through the Traces Drilldown feature, including span metrics generated by Tempo:
@@ -262,7 +262,7 @@ The only issue is that I&#39;m a security analyst by trade, so I&#39;m obsessed 
   <div class="footer__inner">
     
       <div class="copyright">
-        <span>© 2025 Powered by <a href="https://gohugo.io">Hugo</a></span>
+        <span>© 2026 Powered by <a href="https://gohugo.io">Hugo</a></span>
     
       <span>:: <a href="https://github.com/panr/hugo-theme-terminal" target="_blank">Theme</a> made by <a href="https://github.com/panr" target="_blank">panr</a></span>
       </div>
